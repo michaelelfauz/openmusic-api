@@ -1,0 +1,5 @@
+CREATE TABLE albums (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    year INTEGER NOT NULL
+);

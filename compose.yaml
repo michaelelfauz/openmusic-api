@@ -1,0 +1,21 @@
+services:
+  db:
+    container_name: postgres-open-music-api
+    image: postgres:17.2-alpine
+    ports:
+    - '5432:5432'
+    environment:
+      POSTGRES_USER: "${PGUSER:-postgres}"
+      POSTGRES_PASSWORD: "${PGPASSWORD:-root}"
+      POSTGRES_DB: "${PGDATABASE:-postgres}"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # - ./etc/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"] # https://docs.docker.com/reference/compose-file/interpolation/
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+volumes:
+  postgres-data:
