@@ -1,5 +1,5 @@
 // src/lib/database.js
-require('dotenv').config(); // Membaca variabel dari .env file
+require('dotenv').config();
 
 const { Pool } = require('pg');
 
