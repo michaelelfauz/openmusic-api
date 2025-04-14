@@ -4,7 +4,7 @@ const Joi = require('joi');
 const { Pool } = require('pg');
 const Boom = require('@hapi/boom'); // Import Boom
 const { validateAlbum } = require('./validate');
-const routes = require('./routes');
+const routes = require('./src/routes');
 
 const init = async () => {
   const server = Hapi.server({

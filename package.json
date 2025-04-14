@@ -2,24 +2,24 @@
   "name": "openmusic-api",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "node src/server.js",
     "migrate": "node-pg-migrate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^10.0.1",
-    "@hapi/hapi": "latest",
+    "@hapi/hapi": "^21.4.0",
     "@hapi/joi": "^17.1.1",
     "@hapi/jwt": "^3.2.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "nanoid": "^5.1.5",
+    "nanoid": "^3.3.4",
     "pg": "^8.14.1"
   },
   "devDependencies": {
