@@ -1,6 +1,6 @@
 // src/routes.js
 
-const albumsHandler = require('./api/albums/handler');
+const albumsHandler = require('./api/albums');
 const playlistsHandler = require('./api/playlists/PlaylistsHandler');
 
 const routes = (playlistsHandler, albumsHandler) => [

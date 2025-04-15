@@ -27,80 +27,86 @@ const init = async () => {
     },
   });
 
-  // JWT Plugin
-  await server.register([
-    {
-      plugin: Jwt,
-    },
-  ]);
-
-  // JWT Authentication Strategy
-  server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
-    verify: {
-      aud: false,
-      iss: false,
-      sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
-    },
-    validate: (artifacts) => ({
-      isValid: true,
-      credentials: {
-        id: artifacts.decoded.payload.id,
+  try {
+    // Register JWT Plugin
+    await server.register([
+      {
+        plugin: Jwt,
       },
-    }),
-  });
+    ]);
 
-  // Services Instance
-  const playlistsService = new PlaylistsService();
-
-  // Register Plugins
-  await server.register([
-    {
-      plugin: playlists,
-      options: {
-        service: playlistsService,
-        validator: PlaylistsValidator,
+    // JWT Authentication Strategy
+    server.auth.strategy('openmusic_jwt', 'jwt', {
+      keys: process.env.ACCESS_TOKEN_KEY,
+      verify: {
+        aud: false,
+        iss: false,
+        sub: false,
+        maxAgeSec: process.env.ACCESS_TOKEN_AGE,
       },
-    },
-    // Tambahkan plugin lain seperti users, songs, albums jika dibutuhkan
-  ]);
+      validate: (artifacts) => ({
+        isValid: true,
+        credentials: {
+          id: artifacts.decoded.payload.id,
+        },
+      }),
+    });
 
-  // Global error handler
-  server.ext('onPreResponse', (request, h) => {
-    const { response } = request;
+    // Services Instance
+    const playlistsService = new PlaylistsService();
 
-    if (response instanceof Error) {
-      // Client Error
-      if (response instanceof ClientError) {
+    // Register Plugins
+    await server.register([
+      {
+        plugin: playlists,
+        options: {
+          service: playlistsService,
+          validator: PlaylistsValidator,
+        },
+      },
+      // Tambahkan plugin lain seperti users, songs, albums jika dibutuhkan
+    ]);
+
+    // Global error handler
+    server.ext('onPreResponse', (request, h) => {
+      const { response } = request;
+
+      if (response instanceof Error) {
+        // Client Error
+        if (response instanceof ClientError) {
+          const newResponse = h.response({
+            status: 'fail',
+            message: response.message,
+          });
+          newResponse.code(response.statusCode);
+          return newResponse;
+        }
+
+        // Default error handler
+        if (!response.isServer) {
+          return h.continue;
+        }
+
+        // Server Error
         const newResponse = h.response({
-          status: 'fail',
-          message: response.message,
+          status: 'error',
+          message: 'Maaf, terjadi kesalahan pada server kami.',
         });
-        newResponse.code(response.statusCode);
+        newResponse.code(500);
+        console.error(response);
         return newResponse;
       }
 
-      // Default error handler
-      if (!response.isServer) {
-        return h.continue;
-      }
+      return h.continue;
+    });
 
-      // Server Error
-      const newResponse = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kesalahan pada server kami.',
-      });
-      newResponse.code(500);
-      console.error(response);
-      return newResponse;
-    }
-
-    return h.continue;
-  });
-
-  await server.start();
-  console.log(`Server berjalan pada ${server.info.uri}`);
+    // Start server
+    await server.start();
+    console.log(`Server berjalan pada ${server.info.uri}`);
+  } catch (error) {
+    console.error('Server gagal dimulai:', error);
+    process.exit(1);
+  }
 };
 
 init();
