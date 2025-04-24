@@ -34,3 +34,20 @@ docker compose up -d
 ```sh
 npm run migrate up
 ```
+
+
+# Misc
+
+- truncate tables
+
+1. enter to postgres container
+```sh
+docker exec -it container psql -U user -d openmusicapi
+```
+
+2. truncate all tables
+```sql
+TRUNCATE TABLE songs;
+TRUNCATE TABLE albums CASCADE;
+TRUNCATE TABLE users;
+```
